@@ -71,44 +71,25 @@ pipeline{
             }
         }
 
-        withCredentials([usernamePassword(credentialsId: 'docker_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-            stage ('Push image in dockerhub'){
-                agent any
-                when{
-                    expression{ GIT_BRANCH == 'origin/master'}
-                }
-                steps{
-                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        script{ 
-                            sh''' 
-                               docker login -u $USERNAME -p $PASSWORD'
-                               docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                            '''
-                        }
-                    }
-                }
+        stage('Try to connect ssh cloud Ec2') {
+            agent any
+            when{
+                expression{ GIT_BRANCH == 'origin/master'}
             }
-
-        }
-
-        withCredentials([sshUserPrivateKey(credentialsId: "yourkeyidssh-ec2-cloud", keyFileVariable: 'keyfile')]) {
-            stage('Try to connect ssh cloud Ec2') {
-                agent any
-                when{
-                    expression{ GIT_BRANCH == 'origin/master'}
-                }
-                steps{
+            steps{
+                withCredentials([sshUserPrivateKey(credentialsId: "yourkeyidssh-ec2-cloud", keyFileVariable: 'keyfile')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ubuntu@107.23.184.250
-                                docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG} 
+                                ssh -i ${keyfile} 107.23.184.250 -C \'docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}\' 
                             '''
                         }
                     }
                 }
             }
         }
+
+        
 
     }
 }
