@@ -4,7 +4,7 @@ pipeline{
         IMAGE_NAME = "sadofrazer/static-webapp"
         IMAGE_TAG = "latest"
         CONTAINER_NAME = "static-webapp"
-        PRODUCTION_HOST = "107.23.184.250"
+        PRODUCTION_HOST = "3.85.53.199"
     }
 
     agent none
