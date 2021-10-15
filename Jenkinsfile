@@ -1,4 +1,5 @@
 pipeline{
+
     environment{
         IMAGE_NAME = "sadofrazer/static-webapp"
         IMAGE_TAG = "latest"
@@ -77,12 +78,13 @@ pipeline{
                     expression{ GIT_BRANCH == 'origin/master'}
                 }
                 steps{
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    script{ 
-                        sh''' 
-                           docker login -u $USERNAME -p $PASSWORD'
-                           docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                        '''
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        script{ 
+                            sh''' 
+                               docker login -u $USERNAME -p $PASSWORD'
+                               docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                            '''
+                        }
                     }
                 }
             }
@@ -96,12 +98,13 @@ pipeline{
                     expression{ GIT_BRANCH == 'origin/master'}
                 }
                 steps{
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    script{ 
-                        sh'''
-                            ssh -o StrictHostKeyChecking=no -i ${keyfile} ubuntu@107.23.184.250
-                            docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG} 
-                        '''
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        script{ 
+                            sh'''
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ubuntu@107.23.184.250
+                                docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG} 
+                            '''
+                        }
                     }
                 }
             }
