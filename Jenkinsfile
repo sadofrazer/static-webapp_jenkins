@@ -51,7 +51,7 @@ pipeline{
             steps{
                 script{
                     sh'''
-                       curl http://172.17.0.1 | grep -q "DIMENSION"
+                       curl http://172.17.0.1 | grep -q "Dimension"
                     '''
                 }
             }
@@ -66,6 +66,25 @@ pipeline{
                            docker stop ${CONTAINER_NAME}
                            docker rm ${CONTAINER_NAME}
                         '''
+                    }
+                }
+            }
+        }
+
+        stage('Push Image on Dockerhub') {
+            agent any
+            when{
+                expression{ GIT_BRANCH == 'origin/master'}
+            }
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'docker_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        script{ 
+                            sh'''
+                              docker login -u $USERNAME -p $PASSWORD'
+                              docker push ${IMAGE_NAME}:${IMAGE_TAG} 
+                            '''
+                        }
                     }
                 }
             }
