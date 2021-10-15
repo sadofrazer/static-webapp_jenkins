@@ -100,7 +100,7 @@ pipeline{
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker run -n my-nginx -p 80:80 nginx\'
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker run --name ${IMAGE_NAME} -p 80:80 nginx\'
                                 docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}
                             '''
                         }
