@@ -96,11 +96,11 @@ pipeline{
                 expression{ GIT_BRANCH == 'origin/master'}
             }
             steps{
-                withCredentials([sshUserPrivateKey(credentialsId: "ssh-ec2-cloud", keyFileVariable: 'keyfile')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: "ssh-ec2-cloud", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -i ${keyfile} 107.23.184.250 -C \'docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}\' 
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}\' 
                             '''
                         }
                     }
