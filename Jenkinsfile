@@ -81,7 +81,7 @@ pipeline{
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                              docker login -u $USERNAME -p $PASSWORD'
+                              docker login -u ${USERNAME} -p ${PASSWORD}
                               docker push ${IMAGE_NAME}:${IMAGE_TAG} 
                             '''
                         }
@@ -96,7 +96,7 @@ pipeline{
                 expression{ GIT_BRANCH == 'origin/master'}
             }
             steps{
-                withCredentials([sshUserPrivateKey(credentialsId: "yourkeyidssh-ec2-cloud", keyFileVariable: 'keyfile')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: "ssh-ec2-cloud", keyFileVariable: 'keyfile')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
