@@ -4,6 +4,7 @@ pipeline{
         IMAGE_NAME = "sadofrazer/static-webapp"
         IMAGE_TAG = "latest"
         CONTAINER_NAME = "static-webapp"
+        PRODUCTION_HOST = "107.23.184.250"
     }
 
     agent none
@@ -43,8 +44,7 @@ pipeline{
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker rm -f static-webapp-prod \'
-                                docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${PRODUCTION_HOST} -C \'docker rm -f static-webapp-prod \'
                             '''
                         }
                     }
@@ -119,8 +119,7 @@ pipeline{
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker run -d --name static-webapp-prod -p 80:80 sadofrazer/static-webapp\'
-                                docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${PRODUCTION_HOST} -C \'docker run -d --name static-webapp-prod -p 80:80 sadofrazer/static-webapp\'
                             '''
                         }
                     }
