@@ -32,6 +32,25 @@ pipeline{
                 }
             }
         }
+
+        stage('Try to delete container on prod env if exist') {
+            agent any
+            when{
+                expression{ GIT_BRANCH == 'origin/master'}
+            }
+            steps{
+                withCredentials([sshUserPrivateKey(credentialsId: "ssh-ec2-cloud", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        script{ 
+                            sh'''
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker rm -f static-webapp-prod \'
+                                docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                            '''
+                        }
+                    }
+                }
+            }
+        }
    
         stage ('Run container based on builded image') {
             agent any
@@ -90,7 +109,7 @@ pipeline{
             }
         }
 
-        stage('Try to connect ssh cloud Ec2') {
+        stage('Deploy app on EC2-cloud Production') {
             agent any
             when{
                 expression{ GIT_BRANCH == 'origin/master'}
@@ -100,7 +119,7 @@ pipeline{
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{ 
                             sh'''
-                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker run --name static-webapp-prod -p 80:80 sadofrazer/static-webapp\'
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@107.23.184.250 -C \'docker run -d --name static-webapp-prod -p 80:80 sadofrazer/static-webapp\'
                                 docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}
                             '''
                         }
