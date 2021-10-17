@@ -1,4 +1,4 @@
-/* import shared library */
+/* import shared library . */
 @Library('slackNotifier')_
 
 pipeline{
