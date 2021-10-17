@@ -37,29 +37,30 @@ pipeline{
             }
         }
 
-        // stage('Try to delete container on prod env if exist') {
-        //     agent any
-        //     when{
-        //         expression{ GIT_BRANCH == 'origin/master'}
-        //     }
-        //     steps{
-        //         withCredentials([sshUserPrivateKey(credentialsId: "ssh-ec2-cloud", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
-        //             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-        //                 script{ 
-        //                     sh'''
-        //                         ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${PRODUCTION_HOST} -C \'docker rm -f static-webapp-prod \'
-        //                     '''
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Try to delete container on prod env if exist') {
+            agent any
+            when{
+                expression{ GIT_BRANCH == 'origin/master'}
+            }
+            steps{
+                withCredentials([sshUserPrivateKey(credentialsId: "ssh-ec2-cloud", keyFileVariable: 'keyfile', usernameVariable: 'NUSER')]) {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        script{ 
+                            sh'''
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${PRODUCTION_HOST} -C \'docker rm -f static-webapp-prod \'
+                            '''
+                        }
+                    }
+                }
+            }
+        }
    
         stage ('Run container based on builded image') {
             agent any
             steps{
                 script{
                     sh'''
+                       sudo fuser -k 80/tcp
                        docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}
                        sleep 5
                        
