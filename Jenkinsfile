@@ -101,7 +101,9 @@ pipeline{
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                      dockerhubPush ${IMAGE_NAME} ${IMAGE_TAG} ${USERNAME}${PASSWORD}
+                        script{
+                            dockerhubPush ${IMAGE_NAME} ${IMAGE_TAG} ${USERNAME}${PASSWORD}
+                        }
                     }
                 }
             }
@@ -125,11 +127,13 @@ pipeline{
             }
         }
 
-        
-
     }
 
     post{
-        slackNotifier current.buildResult
+        always {
+            script {
+                slackNotifier currentBuild.result
+            }  
+        }  
     }
 }
