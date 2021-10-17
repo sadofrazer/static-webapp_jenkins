@@ -60,7 +60,6 @@ pipeline{
             steps{
                 script{
                     sh'''
-                       fuser -k 80/tcp
                        docker run -d --name ${CONTAINER_NAME} -p 80:80 ${IMAGE_NAME}:${IMAGE_TAG}
                        sleep 5
                        
