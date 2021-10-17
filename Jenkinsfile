@@ -1,5 +1,5 @@
 /* import shared library */
-@Library('eazytraining-shared-library')_
+@Library('slackNotifier')_
 
 pipeline{
 
