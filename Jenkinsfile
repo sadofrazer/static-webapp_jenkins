@@ -99,7 +99,7 @@ pipeline{
                 expression{ GIT_BRANCH == 'origin/master'}
             }
             steps{
-                withCredentials([usernamePassword(credentialsId: 'docker_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{
                             dockerhubPush ${IMAGE_NAME} ${IMAGE_TAG} ${USERNAME}${PASSWORD}
