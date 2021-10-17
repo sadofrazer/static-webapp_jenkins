@@ -1,3 +1,6 @@
+/* import shared library */
+@Library('eazytraining-shared-library')_
+
 pipeline{
 
     environment{
@@ -98,12 +101,7 @@ pipeline{
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        script{ 
-                            sh'''
-                              docker login -u ${USERNAME} -p ${PASSWORD}
-                              docker push ${IMAGE_NAME}:${IMAGE_TAG} 
-                            '''
-                        }
+                      dockerhubPush ${IMAGE_NAME} ${IMAGE_TAG} ${USERNAME}${PASSWORD}
                     }
                 }
             }
@@ -129,5 +127,9 @@ pipeline{
 
         
 
+    }
+
+    post{
+        slackNotifier current.buildResult
     }
 }
