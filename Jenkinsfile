@@ -100,7 +100,7 @@ pipeline{
             }
             steps{
                 withCredentials([usernamePassword(credentialsId: 'dockerhub_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                       always{  
                         script{
                             dockerhubPush currentBuild.result
@@ -108,7 +108,7 @@ pipeline{
                             // sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                         }
                       }
-                    }
+                    // }
                 }
             }
         }
