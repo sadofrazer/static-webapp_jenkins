@@ -5,7 +5,7 @@ pipeline{
 
     environment{
         IMAGE_NAME = "sadofrazer/static-webapp"
-        IMAGE_TAG = ${BUILD_TAG}
+        IMAGE_TAG = "${BUILD_TAG}"
         CONTAINER_NAME = "static-webapp"
         PRODUCTION_HOST = "35.175.174.149"
     }
