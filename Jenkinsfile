@@ -103,7 +103,8 @@ pipeline{
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{
                             dockerhubPush
-                            
+                            sh 'docker login -u ${USERNAME} -p ${PASSWORD}'
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                         }
                     }
                 }
