@@ -102,7 +102,7 @@ pipeline{
                 withCredentials([usernamePassword(credentialsId: 'dockerhub_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         script{
-                            dockerhubPush env.IMAGE_NAME env.IMAGE_TAG env.USERNAME env.PASSWORD
+                            dockerhubPush
                         }
                     }
                 }
