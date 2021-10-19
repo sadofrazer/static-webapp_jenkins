@@ -7,7 +7,7 @@ pipeline{
         IMAGE_NAME = "sadofrazer/static-webapp"
         IMAGE_TAG = "${BUILD_TAG}"
         CONTAINER_NAME = "static-webapp"
-        PRODUCTION_HOST = "35.175.174.149"
+        PRODUCTION_HOST = "54.172.41.69"
     }
 
     agent none
@@ -100,15 +100,14 @@ pipeline{
             }
             steps{
                 withCredentials([usernamePassword(credentialsId: 'dockerhub_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                       always{  
                         script{
-                            dockerhubPush currentBuild.result
-                            // sh 'docker login -u ${USERNAME} -p ${PASSWORD}'
-                            // sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                            sh 'docker login -u ${USERNAME} -p ${PASSWORD}'
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                         }
                       }
-                    // }
+                    }
                 }
             }
         }
