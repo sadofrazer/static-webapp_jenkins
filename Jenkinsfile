@@ -101,12 +101,10 @@ pipeline{
             steps{
                 withCredentials([usernamePassword(credentialsId: 'dockerhub_login', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                      always{  
                         script{
                             sh 'docker login -u ${USERNAME} -p ${PASSWORD}'
                             sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                         }
-                      }
                     }
                 }
             }
