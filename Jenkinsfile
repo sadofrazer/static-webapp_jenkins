@@ -48,6 +48,7 @@ pipeline{
                         script{ 
                             sh'''
                                 ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${PRODUCTION_HOST} -C \'docker rm -f static-webapp-prod \'
+                                ssh -o StrictHostKeyChecking=no -i ${keyfile} ${NUSER}@${PRODUCTION_HOST} -C \'docker rmi -f sadofrazer/static-webapp\'
                             '''
                         }
                     }
@@ -87,6 +88,7 @@ pipeline{
                         sh'''
                            docker stop ${CONTAINER_NAME}
                            docker rm ${CONTAINER_NAME}
+                           docker rmi ${IMAGE_NAME}:${IMAGE_TAG}
                         '''
                     }
                 }
