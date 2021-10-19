@@ -80,21 +80,6 @@ pipeline{
             }
         }
 
-        stage ('Clean Container') {
-            agent any
-            steps{
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    script{
-                        sh'''
-                           docker stop ${CONTAINER_NAME}
-                           docker rm ${CONTAINER_NAME}
-                           docker rmi ${IMAGE_NAME}:${IMAGE_TAG}
-                        '''
-                    }
-                }
-            }
-        }
-
         stage('Push Image on Dockerhub') {
             agent any
             when{
@@ -107,6 +92,21 @@ pipeline{
                             sh 'docker login -u ${USERNAME} -p ${PASSWORD}'
                             sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                         }
+                    }
+                }
+            }
+        }
+
+        stage ('Clean Container') {
+            agent any
+            steps{
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    script{
+                        sh'''
+                           docker stop ${CONTAINER_NAME}
+                           docker rm ${CONTAINER_NAME}
+                           docker rmi ${IMAGE_NAME}:${IMAGE_TAG}
+                        '''
                     }
                 }
             }
